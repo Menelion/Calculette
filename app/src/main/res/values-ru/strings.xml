@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Микрокалькулятор</string>
+    <string name="expression_hint">Введите выражение</string>
+    <string name="result_announcement">Результат: %f</string>
+</resources>

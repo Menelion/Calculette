@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Calculette</string>
+    <string name="expression_hint">Enter Expression</string>
+    <string name="result_announcement">Result: %f</string>
+</resources>
