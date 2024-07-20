@@ -4,8 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -39,49 +39,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        expressionEditBox.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) { }
+        expressionEditBox.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    String expressionString = expressionEditBox.getText().toString();
+                    Expression expression = new Expression(expressionString);
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                    double result = 0.0;
 
-            @Override
-            public void onTextChanged(CharSequence seq, int start, int before, int count) {
-                String text = seq.toString();
-
-                if (text.equals("")) return;
-
-                int index = expressionEditBox.getSelectionStart() - 1;
-
-                Character charToSpeak = text.charAt(index);
-                tts.speak(String.valueOf(charToSpeak), TextToSpeech.QUEUE_FLUSH, null);
-            }
-        });
-
-        expressionEditBox.setOnEditorActionListener((v, actionId, event)-> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                Log.d(TAG, "done button pressed");
-                String expressionString = expressionEditBox.getText().toString();
-                Expression expression = new Expression(expressionString);
-
-                double result = 0.0;
-                try {
-                    result = expression.calculate();
-                } catch (Exception e) {
-                    Log.e(TAG, "Unable to calculate", e);
+                    try {
+                        result = expression.calculate();
+                        String resultString = String.valueOf(result);
+                        String message = getString(R.string.result_announcement, result);
+                        Log.d(TAG, String.format("Result message: %s", message));
+                        tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
+                        expressionEditBox.setText(resultString);
+                        expressionEditBox.setSelection(expressionEditBox.getText().length());
+                        return true;
+                    } catch (Exception e) {
+                        Log.e(TAG, "Unable to calculate", e);
+                        tts.speak(getString(R.string.error), TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                } else {
+                    // Get the pressed key character and speak it
+                    char keyChar = (char) event.getUnicodeChar();
+                    tts.speak(String.valueOf(keyChar), TextToSpeech.QUEUE_FLUSH, null);
                 }
-                String resultString = String.valueOf(result);
-                String message = getString(R.string.result_announcement, result);
-                Log.d(TAG, String.format("Result message: %s", message));
-                tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
-                expressionEditBox.setText(resultString);
-
-                return true;
-            } else {
-                return false;
             }
+            return false;
         });
+
+
     }
 
     @Override
