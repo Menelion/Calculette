@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Микрокалькулятор</string>
     <string name="expression_hint">Введите выражение</string>
-    <string name="result_announcement">Результат: %f</string>
+    <string name="result_announcement">Результат: %s</string>
     <string name="error">Ошибка вычисления</string>
+    <string name="context_menu">Контекстное меню</string>
+    <string name="char_deleted">%s, удалено</string>
 </resources>

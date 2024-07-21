@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Calculette</string>
     <string name="expression_hint">Enter Expression</string>
-    <string name="result_announcement">Result: %f</string>
+    <string name="result_announcement">Result: %s</string>
     <string name="error">Calculation error</string>
+    <string name="context_menu">Context menu</string>
+    <string name="char_deleted">%s, deleted</string>
 </resources>
