@@ -94,13 +94,16 @@ newPosition = position - 1;
                                     tts.speak(adapter.getItem(newPosition), TextToSpeech.QUEUE_FLUSH, null, null);
                                     break;
                                 case KeyEvent.KEYCODE_ENTER:
-                                String operator = adapter.getItem(position);
-                                int cursorPosition = expressionEditBox.getSelectionStart();
-                                expressionEditBox.getText().insert(cursorPosition, operator);
-                                expressionEditBox.setSelection(cursorPosition + 1);
-                                tts.speak(operator, TextToSpeech.QUEUE_FLUSH, null, null);
-                                pseudoMenu.dismiss();
-                                return true;
+                                    String operator = adapter.getItem(position);
+                                    int cursorPosition = expressionEditBox.getSelectionStart();
+                                    expressionEditBox.getText().insert(cursorPosition, operator);
+                                    expressionEditBox.setSelection(cursorPosition + 1);
+                                    tts.speak(operator, TextToSpeech.QUEUE_FLUSH, null, null);
+                                    pseudoMenu.dismiss();
+                                    break;
+                                case KeyEvent.KEYCODE_ESCAPE:
+                                    pseudoMenu.dismiss();
+                                    return true;
                             }
                         }
                         return true;
@@ -108,12 +111,25 @@ newPosition = position - 1;
 
                     pseudoMenu.show();
                     tts.speak(getString(R.string.context_menu), TextToSpeech.QUEUE_FLUSH, null, null);
-                } else if (keyCode == KeyEvent.KEYCODE_DEL || keyCode == KeyEvent.KEYCODE_FORWARD_DEL) {
+                    tts.speak("+", TextToSpeech.QUEUE_FLUSH, null, null);
+                } else if (keyCode == KeyEvent.KEYCODE_DEL) {
                     if (expressionEditBox.getText().length() > 0) {
                         int start = Math.max(expressionEditBox.getSelectionStart(), 0);
-                        if (start > 0) {
-                            String deletedChar = expressionEditBox.getText().toString().substring(start - 1, start);
-                            tts.speak(getString(R.string.char_deleted, deletedChar), TextToSpeech.QUEUE_FLUSH, null, null);
+                        String deletedChar = String.valueOf(expressionEditBox.getText().toString().charAt(start));
+                        tts.speak(getString(R.string.char_deleted, deletedChar), TextToSpeech.QUEUE_FLUSH, null, null);
+                    }
+                    return false;
+                } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    int textLength = expressionEditBox.getText().length();
+                    if (textLength > 0) {
+                        int start = expressionEditBox.getSelectionEnd();
+                        if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && start > 0) {
+                            start--;
+                        }
+                        // Check that start is within the bounds of the text
+                        if (start < textLength) {
+                            String charAtCursor = String.valueOf(expressionEditBox.getText().toString().charAt(start));
+                            tts.speak(charAtCursor, TextToSpeech.QUEUE_FLUSH, null, null);
                         }
                     }
                     return false;
